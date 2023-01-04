@@ -1,7 +1,7 @@
 package hsleiden.iprwc.entities;
 
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "products")
