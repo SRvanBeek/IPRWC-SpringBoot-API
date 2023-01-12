@@ -1,5 +1,6 @@
 package hsleiden.iprwc.DAOs;
 
+import hsleiden.iprwc.Exceptions.DuplicateValueException;
 import hsleiden.iprwc.entities.Type;
 import hsleiden.iprwc.repositories.TypeRepository;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,11 @@ public class TypeDAO {
     }
 
     public void saveType(Type type) {
+        type.setName(type.getName().toUpperCase());
+        if (typeRepository.findByName(type.getName()).isPresent()) {
+            throw new DuplicateValueException("Type " + type.getName() + " already exists!");
+        }
+
         this.typeRepository.save(type);
     }
 

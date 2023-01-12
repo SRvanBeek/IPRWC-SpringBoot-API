@@ -35,6 +35,11 @@ public class TypeController {
         return new ApiResponse<>(HttpStatus.ACCEPTED, types, "products successfully received!");
     }
 
+    /**
+     * saves a new type to the database
+     * @param type the new type to be added
+     * @return an ApiResponse with the corresponding message
+     */
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ApiResponse<String> addType(@RequestBody Type type) {
         try {

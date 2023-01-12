@@ -2,6 +2,7 @@ package hsleiden.iprwc.controllers;
 
 import hsleiden.iprwc.DAOs.ExtraImageDAO;
 import hsleiden.iprwc.DAOs.ProductDAO;
+import hsleiden.iprwc.Exceptions.NotFoundException;
 import hsleiden.iprwc.entities.ApiResponse;
 import hsleiden.iprwc.entities.ExtraImage;
 import hsleiden.iprwc.entities.Product;
@@ -88,6 +89,10 @@ public class ProductController {
         try {
             this.productDAO.addProduct(product);
         }
+        catch (NotFoundException e) {
+            return new ApiResponse<>(HttpStatus.NOT_FOUND, e.getMessage(), product.getName() + " could not be added");
+        }
+
         catch (Exception e) {
             return new ApiResponse<>(HttpStatus.FORBIDDEN, e.getMessage(), product.getName() + " could not be added");
         }
