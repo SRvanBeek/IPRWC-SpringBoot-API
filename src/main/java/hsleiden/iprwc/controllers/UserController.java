@@ -1,25 +1,26 @@
 package hsleiden.iprwc.controllers;
 
+import hsleiden.iprwc.DAOs.UserDAO;
 import hsleiden.iprwc.entities.ApiResponse;
 import hsleiden.iprwc.entities.User;
-import hsleiden.iprwc.repositories.RoleRepository;
 import hsleiden.iprwc.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users" )
 
 public class UserController {
     private final UserService userService;
-    private final RoleRepository roleRepository;
+    private final UserDAO userDAO;
 
-    public UserController(UserService userService, RoleRepository roleRepository) {
+    public UserController(UserService userService, UserDAO userDAO) {
         this.userService = userService;
-        this.roleRepository = roleRepository;
+        this.userDAO = userDAO;
     }
 
     @GetMapping("")
@@ -28,35 +29,27 @@ public class UserController {
     }
 
     @GetMapping("/{username}")
-    public User getUserByUsername(@PathVariable String username) {
-        User user = userService.getUser(username);
-        return user;
+    public ApiResponse<User> getUserByUsername(@PathVariable String username) {
+        Optional<User> user = userDAO.getUserByUsername(username);
+        if (user.isEmpty()) {
+            return new ApiResponse<>(HttpStatus.NOT_FOUND, null, "user does not exist!");
+        }
+
+        return new ApiResponse<>(HttpStatus.ACCEPTED, user.get(), "user received!");
     }
 
-    @PostMapping("/save")
+    @PostMapping("/register")
     public ApiResponse<String> saveUser(@RequestBody User user) {
-        ApiResponse<String> saveUserResponse = this.userService.saveUser(user);
-        ApiResponse<String> addRoleResponse = this.userService.addRoleToUser(user.getUsername(), "ROLE_USER");
-        if (saveUserResponse.getCode() == HttpStatus.FORBIDDEN) {
-            return saveUserResponse;
-        }
-        if (addRoleResponse.getCode() == HttpStatus.FORBIDDEN) {
-            return addRoleResponse;
-        }
-        return new ApiResponse<>(HttpStatus.ACCEPTED, null, "User created!");
+        return this.userService.saveUser(user, false);
     }
 
-    @PostMapping("/admins/save")
+    @PostMapping("/admins/register")
     public ApiResponse<String> saveAdmin(@RequestBody User user) {
-        ApiResponse<String> saveUserResponse = this.userService.saveUser(user);
-        ApiResponse<String> addRoleResponse = this.userService.addRoleToUser(user.getUsername(), "ROLE_ADMIN");
+        ApiResponse<String> saveUserResponse = this.userService.saveUser(user, true);
         if (saveUserResponse.getCode() == HttpStatus.FORBIDDEN) {
             return saveUserResponse;
         }
-        if (addRoleResponse.getCode() == HttpStatus.FORBIDDEN) {
-            return addRoleResponse;
-        }
 
-        return new ApiResponse<>(HttpStatus.ACCEPTED, null,"User created!");
+        return new ApiResponse<>(HttpStatus.ACCEPTED, null,"Admin created!");
     }
 }

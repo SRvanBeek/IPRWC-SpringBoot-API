@@ -1,11 +1,13 @@
 package hsleiden.iprwc.services;
 
 import hsleiden.iprwc.DAOs.UserDAO;
+import hsleiden.iprwc.Exceptions.NotFoundException;
 import hsleiden.iprwc.entities.ApiResponse;
 import hsleiden.iprwc.entities.Role;
 import hsleiden.iprwc.entities.User;
 import hsleiden.iprwc.repositories.RoleRepository;
 import hsleiden.iprwc.repositories.UserRepository;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -53,28 +55,28 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public ApiResponse<String> saveUser(User user) {
+    public ApiResponse<String> saveUser(User user, boolean admin) {
         user.setPassword(passwordEncoder().encode(user.getPassword()));
         user.setRoles(new ArrayList<>());
 
         if (this.userDAO.getUserByUsername(user.getUsername()).isPresent()) {
             return new ApiResponse<>(HttpStatus.FORBIDDEN, null, "username already exists!");
         }
+        if (this.userDAO.getUserByEmail(user.getEmail()).isPresent()) {
+            return new ApiResponse<>(HttpStatus.FORBIDDEN, null, "email already in use!");
+        }
 
+        try {
+            user = addRoleToUser(user, "ROLE_USER");
+            if (admin) {
+                user = addRoleToUser(user, "ROLE_Admin");
+            }
+        }
+        catch (NotFoundException e) {
+            return new ApiResponse<>(HttpStatus.FORBIDDEN, null, e.getMessage());
+        }
         this.userDAO.saveUserToDatabase(user);
         return new ApiResponse<>(HttpStatus.ACCEPTED, null, "user succesfully added");
-    }
-
-    public boolean getUsernameDuplicate(String username){
-        List<User> users = GetUsers();
-        for (User user:users){
-            System.out.println(user.getUsername());
-        }
-        return containsName(users, username);
-    }
-
-    public boolean containsName(final List<User> list, final String name){
-        return list.stream().anyMatch(o -> o.getUsername().equals(name));
     }
 
 
@@ -82,17 +84,14 @@ public class UserService implements UserDetailsService {
         return userDAO.saveRoleToDatabase(role);
     }
 
-    public ApiResponse<String> addRoleToUser(String username, String roleName) {
-        if (this.gebruikerRepository.findByUsername(username).isEmpty()) {
-            return new ApiResponse<>(HttpStatus.FORBIDDEN, null, "user: " + username + " does not exist!" );
-        }
+    private User addRoleToUser(User user, String roleName) {
         if (rolRepository.findByName(roleName).isEmpty()) {
-            return new ApiResponse<>(HttpStatus.FORBIDDEN, null,"role: " + roleName + " does not exist!!" );
+            throw new NotFoundException("role: " + roleName + " does not exist!");
         }
+
         Role role = rolRepository.findByName(roleName).get();
-        User user = gebruikerRepository.findByUsername(username).get();
         user.getRoles().add(role);
-        return new ApiResponse<>(HttpStatus.ACCEPTED, null, "Role added!");
+        return user;
     }
 
 
