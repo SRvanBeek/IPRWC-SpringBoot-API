@@ -27,7 +27,7 @@ public class OrderController {
     @RequestMapping(path = "", method = RequestMethod.POST)
     public ApiResponse<Order> placeOrder(@RequestBody Map<String, Object> requestBody) {
         try {
-            return this.orderDAO.placeOrder((Integer) requestBody.get("customerId"), (List<Integer>) requestBody.get("products"));
+            return this.orderDAO.placeOrder((Integer) requestBody.get("customerId"), (List<Integer>) requestBody.get("productIds"));
         }
         catch (Exception e) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST, null, e.getMessage());
