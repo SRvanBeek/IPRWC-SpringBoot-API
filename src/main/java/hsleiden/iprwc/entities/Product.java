@@ -1,7 +1,11 @@
 package hsleiden.iprwc.entities;
 
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -14,6 +18,8 @@ public class Product {
     String description;
     double price;
     String imageUrl;
+    String type;
+
 
     public long getId() {
         return id;
@@ -55,6 +61,14 @@ public class Product {
         this.imageUrl = imageUrl;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
@@ -63,6 +77,7 @@ public class Product {
                 ", description='" + description + '\'' +
                 ", price=" + price +
                 ", imageUrl='" + imageUrl + '\'' +
+                ", type='" + type + '\'' +
                 '}';
     }
 }
