@@ -1,6 +1,7 @@
 package hsleiden.iprwc.services;
 
 import hsleiden.iprwc.DAOs.ProductDAO;
+import hsleiden.iprwc.Exceptions.NotFoundException;
 import hsleiden.iprwc.entities.Product;
 import org.springframework.stereotype.Service;
 
@@ -28,5 +29,14 @@ public class ProductService {
         }
 
         return randomProducts;
+    }
+
+    public void updateProduct(Product product) {
+        if (productDAO.getOneByID(product.getId()).isEmpty()) {
+            throw new NotFoundException("cannot update product that does not exist!");
+        }
+        else {
+            productDAO.addProduct(product);
+        }
     }
 }

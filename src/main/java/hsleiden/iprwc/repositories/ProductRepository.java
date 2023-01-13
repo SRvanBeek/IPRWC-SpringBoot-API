@@ -9,4 +9,6 @@ import java.util.ArrayList;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
     ArrayList<Product> findAllByType(String type);
+
+    ArrayList<Product> findAllById(long id);
 }

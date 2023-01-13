@@ -99,5 +99,20 @@ public class ProductController {
         return new ApiResponse<>(HttpStatus.ACCEPTED, null, product.getName() + " was succesfully added!");
     }
 
+    @RequestMapping(value = "", method = RequestMethod.PUT)
+    public ApiResponse<String> updateProduct(@RequestBody Product product) {
+        try {
+            this.productService.updateProduct(product);
+        }
+        catch (NotFoundException e) {
+            return new ApiResponse<>(HttpStatus.NOT_FOUND, e.getMessage(), product.getName() + " could not be added");
+        }
+
+        catch (Exception e) {
+            return new ApiResponse<>(HttpStatus.FORBIDDEN, e.getMessage(), product.getName() + " could not be added");
+        }
+        return new ApiResponse<>(HttpStatus.ACCEPTED, null, product.getName() + " was succesfully added!");
+    }
+
 
 }

@@ -74,6 +74,8 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests().antMatchers(HttpMethod.PUT,  "/api/**").hasAnyAuthority("ROLE_ADMIN")
                 .and()
+                .authorizeRequests().antMatchers(HttpMethod.DELETE,  "/api/productImages/**").hasAnyAuthority("ROLE_ADMIN")
+                .and()
                 .authorizeRequests().antMatchers(HttpMethod.DELETE,  "/api/**").hasAnyAuthority("ROLE_SUPERADMIN")
                 .and()
                 .authorizeRequests().anyRequest().authenticated()

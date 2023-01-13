@@ -8,11 +8,8 @@ import hsleiden.iprwc.entities.Product;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +23,9 @@ public class OrderService {
         this.orderDAO = orderDAO;
     }
 
-    public ApiResponse<Order> placeOrder(int customerId, double cost, List<String> productIdsStrings) {
+    public ApiResponse<Order> placeOrder(Integer customerId, String costString, List<String> productIdsStrings) {
+        double cost = Double.parseDouble(costString);
+
         ArrayList<Integer> productIds = new ArrayList<>();
         try {
             for (int i = 0; i < productIdsStrings.size(); i++) {
@@ -36,6 +35,7 @@ public class OrderService {
         catch (NumberFormatException e) {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST, null, "productId must be of a Integer type!");
         }
+
         Order order = new Order();
         order.setCustomerId(customerId);
         order.setCost(cost);

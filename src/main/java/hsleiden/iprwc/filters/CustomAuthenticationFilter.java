@@ -48,7 +48,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         User user = (User)authentication.getPrincipal();
         Instant now = Instant.now();
         hsleiden.iprwc.entities.User userEntity = userDAO.getUserByUsername(user.getUsername()).get();
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        Algorithm algorithm = Algorithm.HMAC256("jwt_secret".getBytes());
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
                 .withIssuer(request.getRequestURL().toString())

@@ -1,5 +1,7 @@
 package hsleiden.iprwc.entities;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 
 @Entity

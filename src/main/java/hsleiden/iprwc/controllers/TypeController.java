@@ -50,4 +50,20 @@ public class TypeController {
             return new ApiResponse<>(HttpStatus.FORBIDDEN, e.getMessage(), "Type could not be added");
         }
     }
+
+    /**
+     * updates an existing type in the database
+     * @param type the new type to be added
+     * @return an ApiResponse with the corresponding message
+     */
+    @RequestMapping(value = "", method = RequestMethod.PUT)
+    public ApiResponse<String> updateType(@RequestBody Type type) {
+        try {
+            this.typeDAO.updateType(type);
+            return new ApiResponse<>(HttpStatus.ACCEPTED, null, "Type "+ type.getName() + " successfully added!");
+        }
+        catch (Exception e) {
+            return new ApiResponse<>(HttpStatus.FORBIDDEN, e.getMessage(), "Type could not be added");
+        }
+    }
 }

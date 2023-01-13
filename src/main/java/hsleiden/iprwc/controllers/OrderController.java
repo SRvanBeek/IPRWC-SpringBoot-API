@@ -27,9 +27,10 @@ public class OrderController {
     @RequestMapping(path = "", method = RequestMethod.POST)
     public ApiResponse<Order> placeOrder(@RequestBody Map<String, Object> requestBody) {
         try {
-            return this.orderService.placeOrder((Integer) requestBody.get("customerId"), (Double) requestBody.get("cost"), (List<String>) requestBody.get("productIds"));
+            return this.orderService.placeOrder((Integer) requestBody.get("customerId"), (String) requestBody.get("cost"), (List<String>) requestBody.get("productIds"));
         }
         catch (Exception e) {
+            System.out.println(e.getMessage());
             return new ApiResponse<>(HttpStatus.BAD_REQUEST, null, e.getMessage());
         }
     }
